@@ -27,16 +27,13 @@ def test_generate_output():
     source2s = ["Did a little work on #a", "Task #123456 - thingy"]
 
     for source in source1s:
-        log = WorkItem()
+        log = WorkItem("ITSM system", source)
         log.done = True if source[0] in ["I"] else False
-        log.summary = source
-        log.source = "ITSM system"
+
         con.work_items.append(log)
     for source in source2s:
-        log = WorkItem()
+        log = WorkItem("Jira", source)
         log.done = True if source[0] in ["I"] else False
-        log.summary = source
-        log.source = "Jira"
         con.work_items.append(log)
 
     week_log = con.generate_weeklog()
