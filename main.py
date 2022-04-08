@@ -10,9 +10,10 @@ if __name__ == "__main__":
     con.zen_assignee = target
     con.fetch_tasks()
 
+    current_section = ""
     for log in con.work_items:
         log: WorkItem
         if log.source != current_section:
             print(f"--------------{log.source}-------------")
             current_section = log.source
-            print(log)
+        print(log)
