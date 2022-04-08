@@ -22,7 +22,7 @@ class Controller:
         self.work_items = []
 
     def fetch_tasks(self) -> None:
-        self._fetch_zendesk_tasks()
+        self._convert_zendesk_tasks_to_work_items(self._fetch_zendesk_tasks())
 
     def generate_weeklog(self) -> str:
         """builds entries for each based on cached information"""
@@ -58,7 +58,7 @@ class Controller:
                 continue
 
             item = WorkItem("zendesk", ticket.summary)
-            if ticket.status == "Closed":
+            if ticket.status in ["solved", "closed"]:
                 item.mark_complete()
             self.work_items.append(item)
 
