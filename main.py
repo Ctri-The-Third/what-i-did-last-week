@@ -1,13 +1,12 @@
-from configparser import ConfigParser
-from src.controller import Controller, WorkItem
+from src.controller import Controller, load_config
+from src.workItem import WorkItem
 
 if __name__ == "__main__":
-    con = Controller()
-
-    cfg = ConfigParser()
-    cfg.read_file(open("last-week.cfg", "r", encoding="utf-8"))
+    cfg = load_config("last-week.cfg")
     target = cfg.get("DEFAULT", "user_email")
-    con.zen_assignee = target
+
+    con = Controller(target)
+
     con.fetch_tasks()
 
     current_section = ""
