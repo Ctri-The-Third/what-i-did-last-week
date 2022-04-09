@@ -6,5 +6,5 @@ The reasoning behind the changes
 
 ### **Testing** 
 
-[ ] Unit testing  
-[ ] Functional test 
+- [ ] Unit testing  
+- [ ] Functional test 
