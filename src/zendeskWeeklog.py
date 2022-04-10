@@ -37,7 +37,7 @@ class ZendeskWeeklog(zendesk):
 
         return_obj = []
         for key in zd_tickets:
-            if not isinstance(key, str):
+            if not isinstance(key, int):
                 _LO.warning("Discarding weird zendesk ticket response key: %s", key)
                 continue
             ticket: ZendeskTicket = zd_tickets[key]

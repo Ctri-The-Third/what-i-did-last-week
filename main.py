@@ -1,8 +1,16 @@
+import sys
+import logging
+
 from src.controller import Controller, load_config
 from src.workItem import WorkItem
+from src.zendeskWeeklog import ZendeskWeeklog
 
 if __name__ == "__main__":
-    cfg = load_config("last-week.cfg")
+    logging.basicConfig(
+        handlers=[logging.StreamHandler(sys.stdout)], level=logging.INFO
+    )
+
+    cfg = load_config()
     target = cfg.get("DEFAULT", "user_email")
 
     con = Controller(target)
