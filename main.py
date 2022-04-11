@@ -10,9 +10,10 @@ if __name__ == "__main__":
         handlers=[logging.StreamHandler(sys.stdout)], level=logging.INFO
     )
 
-    cfg = load_config()
-    target = cfg.get("DEFAULT", "user_email")
-
+    if len(sys.argv) == 0:
+        logging.error("No email address specified in startup args")
+        exit()
+    target = sys.argv[0]
     con = Controller(target)
 
     con.fetch_tasks()
