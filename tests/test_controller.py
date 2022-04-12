@@ -21,11 +21,12 @@ def test_generate_output():
         con.work_items.append(log)
     for source in source2s:
         log = WorkItem("Jira", source)
+        log.time_str = "0h 30m"
         log.done = True if source[0] in ["I"] else False
         con.work_items.append(log)
 
     week_log = con.generate_weeklog()
     assert (
         week_log
-        == "ITSM system\t🟢 - I did one thing last week - but I finished it\nJira\t🟡 - Did a little work on #a\nJira\t🟡 - Task #123456 - thingy\n"
+        == "ITSM system 🟢          - I did one thing last week - but I finished it\nJira        🟡 0h 30m   - Did a little work on #a\nJira        🟡 0h 30m   - Task #123456 - thingy\n"
     )

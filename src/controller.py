@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import logging
 from configparser import ConfigParser
 
-from src.zendeskWeeklog import ZendeskWeeklog
+from src.zendesk_weeklog import ZendeskWeeklog
 from src.freshdesk_weeklog import FreshdeskWeeklog
 
 _LO = logging.getLogger("controller")

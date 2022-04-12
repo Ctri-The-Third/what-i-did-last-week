@@ -3,7 +3,7 @@ import logging
 
 from src.controller import Controller, load_config
 from src.workItem import WorkItem
-from src.zendeskWeeklog import ZendeskWeeklog
+from src.zendesk_weeklog import ZendeskWeeklog
 
 if __name__ == "__main__":
     logging.basicConfig(

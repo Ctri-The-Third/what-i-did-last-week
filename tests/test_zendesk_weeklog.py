@@ -1,5 +1,5 @@
 import os, re
-from src.zendeskWeeklog import ZendeskWeeklog
+from src.zendesk_weeklog import ZendeskWeeklog
 from src.controller import Controller
 
 
