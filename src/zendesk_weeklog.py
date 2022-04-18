@@ -55,3 +55,7 @@ class ZendeskWeeklog(zendesk):
                 item.mark_complete()
             return_obj.append(item)
         return return_obj
+
+    def get_organisation(self, orgID: int) -> None:
+        "does nothing except keep the parser happy"
+        return

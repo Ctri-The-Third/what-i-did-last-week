@@ -3,13 +3,13 @@ from datetime import datetime, timedelta
 import logging
 from configparser import ConfigParser
 
-from src.zendeskWeeklog import ZendeskWeeklog
+from src.zendesk_weeklog import ZendeskWeeklog
 
 _LO = logging.getLogger("controller")
 
 
 class Controller:
-    """This controller class interacts with and initalises the service helpers to generate weeklogs"""
+    """This controller class interacts with and initalises the hex helpers to generate weeklogs"""
 
     def __init__(self, assignee: str) -> None:
         self.assignee = assignee
@@ -33,7 +33,8 @@ class Controller:
         return out_str
 
 
-def load_config(str) -> dict:
+def load_config(path="last-week.cfg") -> ConfigParser:
+    "loads a config file and returns the un-vetted content"
     cfg = ConfigParser()
-    cfg.read_file(open("last-week.cfg", "r", encoding="utf-8"))
+    cfg.read_file(open(path, "r", encoding="utf-8"))
     return cfg
