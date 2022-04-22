@@ -1,8 +1,13 @@
 import logging
+import math
+
+from serviceHelpers.zendesk import zendesk, ZendeskTicket, ZendeskWorklog
+
 from src.workItem import WorkItem
-from serviceHelpers.zendesk import zendesk, ZendeskTicket
+from src.common_methods import convert_min_to_time_str
 
 _LO = logging.getLogger("zendeskWeeklog")
+ZENDESK_CUSTOM_FIELD = 360028226411
 
 
 class ZendeskWeeklog(zendesk):
@@ -12,6 +17,7 @@ class ZendeskWeeklog(zendesk):
         super().__init__(host, api_key)
         self.zen_assingee = assignee
         self.work_items = []
+        self.logger = _LO
 
     def fetch_zendesk_tasks(self, last_week_date) -> list:
         "Trigger API calls to fetch tickets from zendesk and convert to work item"
@@ -49,9 +55,19 @@ class ZendeskWeeklog(zendesk):
                 )
 
                 continue
-
-            item = WorkItem("zendesk", ticket.summary)
+            time = convert_min_to_time_str(
+                math.floor(self._get_time_total_for_task(ticket.id) / 60)
+            )
+            item = WorkItem("zendesk", f"ZD#{ticket.id} - {ticket.summary}", time)
             if ticket.status in ["solved", "closed"]:
                 item.mark_complete()
             return_obj.append(item)
         return return_obj
+
+    def _get_time_total_for_task(self, ticket_id) -> int:
+        logs = self.get_worklogs(ticket_id, ZENDESK_CUSTOM_FIELD)
+        total = 0
+        for log in logs:
+            log: ZendeskWorklog
+            total += log.duration
+        return total
