@@ -5,7 +5,6 @@ from src.workItem import WorkItem
 from src.common_methods import convert_min_to_time_str, convert_time_str_to_min
 
 
-
 _LO = logging.getLogger("zendeskWeeklog")
 
 

@@ -1,7 +1,7 @@
-import pytest
 import os
 import logging
-from src.freshdesk_weeklog import FreshdeskWeekloger, _convert_time_str_to_min
+from src.freshdesk_weeklog import FreshdeskWeekloger
+from src.common_methods import convert_time_str_to_min
 
 FRESHDESK_KEY = os.environ.get("FRESHDESK_KEY")
 FRESHDESK_HOST = os.environ.get("FRESHDESK_HOST")
@@ -32,11 +32,11 @@ def test_init(caplog):
 
 def test_time_str_converter():
     "check the time string converter doesn't break"
-    assert _convert_time_str_to_min(0) == 0
-    assert _convert_time_str_to_min("avacado") == 0
-    assert _convert_time_str_to_min("123:456") == 0
-    assert _convert_time_str_to_min("01:00") == 60
-    assert _convert_time_str_to_min("01:30") == 90
+    assert convert_time_str_to_min(0) == 0
+    assert convert_time_str_to_min("avacado") == 0
+    assert convert_time_str_to_min("123:456") == 0
+    assert convert_time_str_to_min("01:00") == 60
+    assert convert_time_str_to_min("01:30") == 90
     pass
 
 
