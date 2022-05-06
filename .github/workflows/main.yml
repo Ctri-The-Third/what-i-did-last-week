@@ -30,7 +30,7 @@ jobs:
       ZENDESK_HOST: ${{ secrets.ZENDESK_HOST}}
       FRESHDESK_KEY: ${{ secrets.FRESHDESK_KEY}}
       FRESHDESK_HOST: ${{ secrets.FRESHDESK_HOST}}
-      TARGET_EMAIL: ${{ secrets.TEST_EMAIL}}
+      TEST_EMAIL: ${{ secrets.TEST_EMAIL}}
       JIRA_HOST_1: ${{secrets.JIRA_HOST_1}}
       JIRA_KEY_1: ${{secrets.JIRA_KEY_1}}
     # Steps represent a sequence of tasks that will be executed as part of the job
