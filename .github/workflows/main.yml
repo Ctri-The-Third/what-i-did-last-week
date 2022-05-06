@@ -30,7 +30,9 @@ jobs:
       ZENDESK_HOST: ${{ secrets.ZENDESK_HOST}}
       FRESHDESK_KEY: ${{ secrets.FRESHDESK_KEY}}
       FRESHDESK_HOST: ${{ secrets.FRESHDESK_HOST}}
-      TARGET_EMAIL: ${{ secrets.TEST_EMAIL}}
+      TEST_EMAIL: ${{ secrets.TEST_EMAIL}}
+      JIRA_HOST_1: ${{secrets.JIRA_HOST_1}}
+      JIRA_KEY_1: ${{secrets.JIRA_KEY_1}}
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -47,8 +49,8 @@ jobs:
           pip install -r requirements.txt
       - name: Install hex helper
         run: |
-          wget https://github.com/Ctri-The-Third/ServiceHelpers/releases/download/v2.0.1/hex_helpers-2.0.1-py3-none-any.whl -O hex_helpers-2.0.1-py3-none-any.whl
-          pip install ./hex_helpers-2.0.1-py3-none-any.whl
+          wget https://github.com/Ctri-The-Third/ServiceHelpers/releases/download/v2.2.0/hex_helpers-2.2.0-py3-none-any.whl -O hex_helpers-2.2.0-py3-none-any.whl
+          pip install ./hex_helpers-2.2.0-py3-none-any.whl
       # Runs a set of commands using the runners shell
       - name: Test with pytest
         run: pytest -vv

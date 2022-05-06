@@ -1,14 +1,14 @@
 import logging
+from serviceHelpers.freshdesk import FreshDesk, FreshdeskTicket
 
 from src.workItem import WorkItem
-import re
-import math
-from serviceHelpers.freshdesk import FreshDesk, FreshdeskTicket
+from src.common_methods import convert_min_to_time_str, convert_time_str_to_min
+
 
 _LO = logging.getLogger("zendeskWeeklog")
 
 
-class FreshdeskWeeklog(FreshDesk):
+class FreshdeskWeekloger(FreshDesk):
     """Class to retrieve and instantiate a series of workitems from Zendesk"""
 
     def __init__(self, host, api_key, assignee) -> None:
@@ -16,6 +16,7 @@ class FreshdeskWeeklog(FreshDesk):
         self.assignee = assignee
         self.assignee_o = self.search_agent(email=assignee)
         self.work_items = []
+        self.logger = _LO
 
     def fetch_freshdesk_tasks(self, last_week_date: str) -> list:
         "Trigger API calls to fetch tickets from zendesk and convert to work item"
@@ -34,12 +35,12 @@ class FreshdeskWeeklog(FreshDesk):
                 for log in worklogs:
                     if (
                         log.get("agent_id", 0) == self.assignee_o.id
-                        and log.get("executed_at"[0:10], "") > last_week_date
+                        and log.get("executed_at", "")[0:10] > last_week_date
                     ):
-                        time_minutes += _convert_time_str_to_min(
+                        time_minutes += convert_time_str_to_min(
                             log.get("time_spent", "00:00")
                         )
-                time_str = _convert_min_to_time_str(time_minutes)
+                time_str = convert_min_to_time_str(time_minutes)
 
                 item = WorkItem(
                     "Freshdesk", f"FD#{ticket.id} - {ticket.subject}", time_str
@@ -49,23 +50,3 @@ class FreshdeskWeeklog(FreshDesk):
                 self.work_items.append(item)
         return self.work_items
         # generate the contributions
-
-
-def _convert_time_str_to_min(time_string: str) -> int:
-    if not isinstance(time_string, str):
-
-        return 0
-    if re.match(r"[0-9]{2}:[0-9]{2}", time_string) is None:
-        return 0
-
-    hours = int(time_string[0:2])
-    mins = int(time_string[3:5])
-    return hours * 60 + mins
-
-
-def _convert_min_to_time_str(mins: int) -> str:
-    if not isinstance(mins, int):
-        return "0h 0m"
-    hours = math.floor(mins / 60)
-    mins = mins % 60
-    return f"{hours}h {mins}m"
