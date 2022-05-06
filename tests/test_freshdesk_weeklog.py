@@ -1,7 +1,7 @@
 import pytest
 import os
 import logging
-from src.freshdesk_weeklog import FreshdeskWeeklog, _convert_time_str_to_min
+from src.freshdesk_weeklog import FreshdeskWeekloger, _convert_time_str_to_min
 
 FRESHDESK_KEY = os.environ.get("FRESHDESK_KEY")
 FRESHDESK_HOST = os.environ.get("FRESHDESK_HOST")
@@ -53,8 +53,8 @@ def no_warnings(caplog):
     _no_records_with_level(caplog, logging.WARNING)
 
 
-def _get_weeklog() -> FreshdeskWeeklog:
-    return FreshdeskWeeklog(FRESHDESK_HOST, FRESHDESK_KEY, TARGET_EMAIL)
+def _get_weeklog() -> FreshdeskWeekloger:
+    return FreshdeskWeekloger(FRESHDESK_HOST, FRESHDESK_KEY, TARGET_EMAIL)
 
 
 def _no_records_with_level(caplog, level):

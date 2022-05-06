@@ -1,11 +1,11 @@
 import os, re
-from src.zendesk_weeklog import ZendeskWeeklog
+from src.zendesk_weeklog import ZendeskWeekloger
 from src.controller import Controller
 
 
 def test_bad_zd_assignee():
     "with a bad assignee we should get an empty dict"
-    zen = ZendeskWeeklog(
+    zen = ZendeskWeekloger(
         os.environ["ZENDESK_HOST"],
         os.environ["ZENDESK_KEY"],
         "this_is_not_a_person@lies.com",
@@ -29,7 +29,7 @@ def test_last_week_date():
 
 def test_bad_zd_response():
     """Checks type handling of zd response"""
-    zen = ZendeskWeeklog(
+    zen = ZendeskWeekloger(
         os.environ["ZENDESK_HOST"],
         os.environ["ZENDESK_KEY"],
         "sebastiano.todaro@unity3d.com",

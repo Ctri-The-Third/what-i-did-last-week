@@ -1,13 +1,15 @@
 import logging
+from serviceHelpers.freshdesk import FreshDesk, FreshdeskTicket
 
 from src.workItem import WorkItem
 from src.common_methods import convert_min_to_time_str, convert_time_str_to_min
-from serviceHelpers.freshdesk import FreshDesk, FreshdeskTicket
+
+
 
 _LO = logging.getLogger("zendeskWeeklog")
 
 
-class FreshdeskWeeklog(FreshDesk):
+class FreshdeskWeekloger(FreshDesk):
     """Class to retrieve and instantiate a series of workitems from Zendesk"""
 
     def __init__(self, host, api_key, assignee) -> None:

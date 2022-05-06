@@ -3,6 +3,7 @@ import math
 
 
 def convert_time_str_to_min(time_string: str) -> int:
+    "Turn a time string back into a number of minutes"
     if not isinstance(time_string, str):
 
         return 0
@@ -15,6 +16,7 @@ def convert_time_str_to_min(time_string: str) -> int:
 
 
 def convert_min_to_time_str(mins: int) -> str:
+    "Turn a number of minutes into a string in the format `1h 30m`"
     if not isinstance(mins, int):
         return "0h 0m"
     hours = math.floor(mins / 60)

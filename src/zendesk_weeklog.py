@@ -10,7 +10,7 @@ _LO = logging.getLogger("zendeskWeeklog")
 ZENDESK_CUSTOM_FIELD = 360028226411
 
 
-class ZendeskWeeklog(zendesk):
+class ZendeskWeekloger(zendesk):
     """Class to retrieve and instantiate a series of workitems from Zendesk"""
 
     def __init__(self, host: str, api_key, assignee):
