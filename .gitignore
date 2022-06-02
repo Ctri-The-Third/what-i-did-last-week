@@ -129,5 +129,6 @@ dmypy.json
 .pyre/
 last-week.cfg
 
-
 *.secret
+src/gcredentials.secret
+
