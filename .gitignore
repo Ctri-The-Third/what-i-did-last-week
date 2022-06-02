@@ -130,5 +130,5 @@ dmypy.json
 last-week.cfg
 
 *.secret
-src/gcredentials.secret
+*.pem
 
