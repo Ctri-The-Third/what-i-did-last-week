@@ -3,7 +3,12 @@ import logging
 
 from bottle import route, run, request, response, post
 
-from src.main_page_functions import do_the_big_thing, get_credentials, get_user, run_auth_flow
+from src.main_page_functions import (
+    do_the_big_thing,
+    get_credentials,
+    get_user,
+    run_auth_flow,
+)
 
 
 @route("/")
@@ -16,7 +21,7 @@ def index():
             name = user["given_name"]
             email = user["email"]
 
-            do_the_big_thing(creds,email)
+            do_the_big_thing(creds, email)
         except Exception as err:
             return "something weird happened %s" % (err)
         return f"""Hey {name} Looks like you're logged in okay: <br/> I see we've consent for the following scopes...<br/>{scope_str}<br/>
