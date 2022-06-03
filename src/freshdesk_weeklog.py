@@ -2,7 +2,8 @@ import logging
 from serviceHelpers.freshdesk import FreshDesk, FreshdeskTicket
 
 from src.workItem import WorkItem
-from src.common_methods import convert_min_to_time_str, convert_time_str_to_min
+from src.common_methods import convert_min_to_time_str
+from src.common_methods import convert_fd_time_str_to_min
 
 
 _LO = logging.getLogger("zendeskWeeklog")
@@ -37,13 +38,17 @@ class FreshdeskWeekloger(FreshDesk):
                         log.get("agent_id", 0) == self.assignee_o.id
                         and log.get("executed_at", "")[0:10] > last_week_date
                     ):
-                        time_minutes += convert_time_str_to_min(
+                        time_minutes += convert_fd_time_str_to_min(
                             log.get("time_spent", "00:00")
                         )
                 time_str = convert_min_to_time_str(time_minutes)
 
                 item = WorkItem(
-                    "Freshdesk", f"FD#{ticket.id} - {ticket.subject}", time_str
+                    "Freshdesk",
+                    f"{ticket.subject}",
+                    time_str,
+                    f"FD#{ticket.id}",
+                    f"https://{self.host}/a/tickets/{ticket.id}",
                 )
                 if ticket.status in [4, 5]:
                     item.mark_complete()

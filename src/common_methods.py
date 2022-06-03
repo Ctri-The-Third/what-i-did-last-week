@@ -2,7 +2,7 @@ import re
 import math
 
 
-def convert_time_str_to_min(time_string: str) -> int:
+def convert_fd_time_str_to_min(time_string: str) -> int:
     "Turn a time string back into a number of minutes"
     if not isinstance(time_string, str):
 
@@ -12,6 +12,20 @@ def convert_time_str_to_min(time_string: str) -> int:
 
     hours = int(time_string[0:2])
     mins = int(time_string[3:5])
+    return hours * 60 + mins
+
+
+def convert_jira_time_str_to_min(time_string: str) -> int:
+    "Turn a time string back into a number of minutes"
+    if not isinstance(time_string, str):
+
+        return 0
+    matches = re.match(r"([0-9])+h ([0-9])+m", time_string)
+    if matches is None:
+        return 0
+
+    hours = int(matches[1])
+    mins = int(matches[2])
     return hours * 60 + mins
 
 

@@ -27,6 +27,7 @@ def index():
             return "something weird happened %s" % (err)
 
         # user is logged in and there are no issues yet - deploy!
+        
         return output_work_items(do_the_big_thing(creds, email))
 
     else:

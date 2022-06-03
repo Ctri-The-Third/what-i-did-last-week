@@ -12,7 +12,7 @@ class WorkItem:
         self.summary = summary
         self.time_str = time_str
         self.id = id
-        self.url = ""
+        self.url = url
 
     def mark_complete(self):
         self.done = True

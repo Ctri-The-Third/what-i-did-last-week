@@ -30,7 +30,13 @@ class JiraWorklogger(Jira):
             ):
                 continue
 
-            item = WorkItem("Jira", f"{ticket.key} {ticket.summary}")
+            item = WorkItem(
+                "Jira",
+                ticket.summary,
+                "",
+                ticket.key,
+                f"https://{self.host}/browse/{ticket.key}",
+            )
             all_logs = self.fetch_worklogs_for_jira_ticket(ticket.key)
             if ticket.status in ["Done", "Resolved", "Closed"]:
                 item.mark_complete()

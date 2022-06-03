@@ -5,7 +5,7 @@ from googleapiclient.discovery import build
 
 from src.controller import Controller, load_config
 from src.workItem import WorkItem
-from src.common_methods import convert_time_str_to_min, convert_min_to_time_str
+from src.common_methods import convert_jira_time_str_to_min, convert_min_to_time_str
 from markdown import markdown
 
 ALL_SCOPES = [
@@ -13,7 +13,6 @@ ALL_SCOPES = [
     "https://www.googleapis.com/auth/userinfo.email",
     "openid",
     "https://www.googleapis.com/auth/calendar.events.readonly",
-    "https://www.googleapis.com/auth/gmail.metadata",
 ]
 
 
@@ -62,7 +61,6 @@ def get_user(creds: Credentials) -> dict:
 
 
 def do_the_big_thing(creds: Credentials, target: str) -> list:
-    cfg = load_config()
 
     con = Controller(target)
 
@@ -75,22 +73,24 @@ def do_the_big_thing(creds: Credentials, target: str) -> list:
             print(f"--------------{log.source}-------------")
             current_section = log.source
         print(log)
-    return con.work_items
+    return con
 
 
-def output_work_items(work_items: list) -> str:
+def output_work_items(cont: Controller) -> str:
     "Fill the markdown format with the content."
-
+    work_items = cont.work_items
     total_time = 0
     table_rows = ""
     for item in work_items:
         item: WorkItem
-        total_time += convert_time_str_to_min(item.time_str)
+        total_time += convert_jira_time_str_to_min(item.time_str)
         status_emoji = "🟢" if item.done else "🟡"
 
         table_rows += f"| {item.source} | [{item.id}]({item.url}) | {status_emoji} | {item.time_str} | {item.summary} | \n"
     total_time = convert_min_to_time_str(total_time)
     f = open(r"src/output_page.md", "r+")
-    md_content = f.read().format(total_time=total_time, table_entries=table_rows)
+    md_content = f.read().format(
+        total_time=total_time, table_entries=table_rows, start_date=cont.last_week_date
+    )
     html = markdown(md_content, extensions=["tables"])
     return html

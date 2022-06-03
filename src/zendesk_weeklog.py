@@ -30,6 +30,7 @@ class ZendeskWeekloger(zendesk):
         "Trigger API calls to fetch tickets from zendesk and convert to work item"
 
         self.target_date_str = last_week_date
+
         self.work_items = self._convert_zendesk_tasks_to_work_items(
             self._fetch_zendesk_tasks(last_week_date)
         )
@@ -69,7 +70,13 @@ class ZendeskWeekloger(zendesk):
                     self._get_time_total_for_task(ticket.id, self.target_date_str) / 60
                 )
             )
-            item = WorkItem("zendesk", f"ZD#{ticket.id} - {ticket.summary}", time)
+            item = WorkItem(
+                "zendesk",
+                ticket.summary,
+                time,
+                f"ZD#{ticket.id}",
+                url=f"https://{self.host}/agent/tickets/{ticket.id}",
+            )
             if ticket.status in ["solved", "closed"]:
                 item.mark_complete()
             return_obj.append(item)
