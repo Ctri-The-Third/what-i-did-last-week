@@ -2,31 +2,35 @@ import sys
 import logging
 
 from bottle import route, run, request, response, post
+from src.workItem import WorkItem
+from src.main_page_functions import *
 
-from src.main_page_functions import (
-    do_the_big_thing,
-    get_credentials,
-    get_user,
-    run_auth_flow,
-)
+
+PORT = 8080
+HOSTNAME = "127.0.0.1"
 
 
 @route("/")
 def index():
     params = request.query
+    params: dict
     if "code" in params:
         try:
             creds = get_credentials(params["code"])
+            if isinstance(creds, str):
+                return creds
             user = get_user(creds)
             name = user["given_name"]
             email = user["email"]
 
-            do_the_big_thing(creds, email)
         except Exception as err:
             return "something weird happened %s" % (err)
-        return f"""Hey {name} Looks like you're logged in okay: <br/> I see we've consent for the following scopes...<br/>{scope_str}<br/>
-        """
+
+        # user is logged in and there are no issues yet - deploy!
+        return output_work_items(do_the_big_thing(creds, email))
+
     else:
+
         return run_auth_flow()
 
 
@@ -35,7 +39,11 @@ if __name__ == "__main__":
         handlers=[logging.StreamHandler(sys.stdout)], level=logging.INFO
     )
 
-    port = 8080
-    host = "127.0.0.1"
-    print("PReparing to host")
-    run(port=port, host=host, certfile="src/widlw.pem", keyfile="src/widlw-key.pem")
+    print("Preparing to host")
+    run(
+        port=PORT,
+        host=HOSTNAME,
+        # server="gunicorn",
+        certfile="src/widlw.pem",
+        keyfile="src/widlw.key",
+    )

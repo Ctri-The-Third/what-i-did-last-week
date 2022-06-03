@@ -1,9 +1,12 @@
+import os
 from google_auth_oauthlib.flow import Flow
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 
 from src.controller import Controller, load_config
 from src.workItem import WorkItem
+from src.common_methods import convert_time_str_to_min, convert_min_to_time_str
+from markdown import markdown
 
 ALL_SCOPES = [
     "https://www.googleapis.com/auth/userinfo.profile",
@@ -25,19 +28,11 @@ def run_auth_flow() -> str:
 
     url = flow.authorization_url(prompt="consent")[0]
 
-    return r"""
-    <script type="text/javascript">
-        function redirect() {
-            window.location.replace("%s")
-        }
-        setTimeout(redirect,1000); 
-    </script>
-    <p><b>hello there.</b><br/> To use WIDLW, use the google login flow link below<br/> <a href = "%s">link</a><br/> Redirecting in ~1 second</p>
-    
-    """ % (
-        url,
-        url,
-    )
+    f = open(r"src/intro_page.md", "r+")
+    md_content = f.read().format(url=url, envs="")
+    html = markdown(md_content)
+
+    return html
 
 
 def get_credentials(code) -> Credentials:
@@ -50,7 +45,7 @@ def get_credentials(code) -> Credentials:
 
         flow.fetch_token(code=code)
     except Exception as err:
-        return f"yo, something weird went wrong with that google login - best return back to the <a href = '/'> home page</a> and try again"
+        return f"yo, something weird went wrong with that google login - best return back to the <a href = '/'> home page</a> and try again<br>{err}"
 
         # print(service)
     return flow.credentials
@@ -66,9 +61,8 @@ def get_user(creds: Credentials) -> dict:
         print(err)
 
 
-def do_the_big_thing(creds: Credentials, target: str) -> str:
+def do_the_big_thing(creds: Credentials, target: str) -> list:
     cfg = load_config()
-    target
 
     con = Controller(target)
 
@@ -81,3 +75,22 @@ def do_the_big_thing(creds: Credentials, target: str) -> str:
             print(f"--------------{log.source}-------------")
             current_section = log.source
         print(log)
+    return con.work_items
+
+
+def output_work_items(work_items: list) -> str:
+    "Fill the markdown format with the content."
+
+    total_time = 0
+    table_rows = ""
+    for item in work_items:
+        item: WorkItem
+        total_time += convert_time_str_to_min(item.time_str)
+        status_emoji = "🟢" if item.done else "🟡"
+
+        table_rows += f"| {item.source} | [{item.id}]({item.url}) | {status_emoji} | {item.time_str} | {item.summary} | \n"
+    total_time = convert_min_to_time_str(total_time)
+    f = open(r"src/output_page.md", "r+")
+    md_content = f.read().format(total_time=total_time, table_entries=table_rows)
+    html = markdown(md_content, extensions=["tables"])
+    return html

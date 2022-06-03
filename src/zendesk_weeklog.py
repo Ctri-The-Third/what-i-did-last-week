@@ -15,6 +15,9 @@ class ZendeskWeekloger(zendesk):
 
     def __init__(self, host: str, api_key, assignee):
         super().__init__(host, api_key)
+
+        if host is None or api_key is None:
+            _LO.warning("Didn't init with host, or API key. Check environs.")
         self.work_items = []
         self.logger = _LO
         self.zen_assignee = ZendeskUser({})

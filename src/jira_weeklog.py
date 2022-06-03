@@ -38,7 +38,7 @@ class JiraWorklogger(Jira):
             seconds = 0
             for log in all_logs:
                 log: JiraWorklog
-                self.logger.debug(log.author_email, log.duration_seconds)
+                # self.logger.debug(log.author_email, log.duration_seconds)
                 if (
                     self.jira_assignee in [log.author_email, log.author_key]
                     and log.created.strftime(r"%Y-%m-%d") >= target_date
