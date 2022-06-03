@@ -1,7 +1,7 @@
 import logging
 import math
 
-from serviceHelpers.zendesk import zendesk, ZendeskTicket, ZendeskWorklog
+from serviceHelpers.zendesk import zendesk, ZendeskTicket, ZendeskWorklog, ZendeskUser
 
 from src.workItem import WorkItem
 from src.common_methods import convert_min_to_time_str
@@ -15,12 +15,22 @@ class ZendeskWeekloger(zendesk):
 
     def __init__(self, host: str, api_key, assignee):
         super().__init__(host, api_key)
-        self.zen_assingee = assignee
+
+        if host is None or api_key is None:
+            _LO.warning("Didn't init with host, or API key. Check environs.")
         self.work_items = []
         self.logger = _LO
+        self.zen_assignee = ZendeskUser({})
+        for obj in self.search_for_users(assignee).values():
+            obj: ZendeskUser
+            self.zen_assignee = obj if obj.email == assignee else self.zen_assignee
+        self.target_date_str = ""
 
     def fetch_zendesk_tasks(self, last_week_date) -> list:
         "Trigger API calls to fetch tickets from zendesk and convert to work item"
+
+        self.target_date_str = last_week_date
+
         self.work_items = self._convert_zendesk_tasks_to_work_items(
             self._fetch_zendesk_tasks(last_week_date)
         )
@@ -30,7 +40,7 @@ class ZendeskWeekloger(zendesk):
         """Fetches ZD tasks
 
         `last_week_date` should be in the foromat %Y-%m-%d"""
-        search_str = f"assignee:{self.zen_assingee} updated>={last_week_date}"
+        search_str = f"assignee:{self.zen_assignee.user_id} updated>={last_week_date}"
         zd_tickets = self.search_for_tickets(search_str)
         return zd_tickets
 
@@ -56,18 +66,31 @@ class ZendeskWeekloger(zendesk):
 
                 continue
             time = convert_min_to_time_str(
-                math.floor(self._get_time_total_for_task(ticket.id) / 60)
+                math.floor(
+                    self._get_time_total_for_task(ticket.id, self.target_date_str) / 60
+                )
             )
-            item = WorkItem("zendesk", f"ZD#{ticket.id} - {ticket.summary}", time)
+            item = WorkItem(
+                "zendesk",
+                ticket.summary,
+                time,
+                f"ZD#{ticket.id}",
+                url=f"https://{self.host}/agent/tickets/{ticket.id}",
+            )
             if ticket.status in ["solved", "closed"]:
                 item.mark_complete()
             return_obj.append(item)
         return return_obj
 
-    def _get_time_total_for_task(self, ticket_id) -> int:
+    def _get_time_total_for_task(self, ticket_id, target_date_str) -> int:
+
         logs = self.get_worklogs(ticket_id, ZENDESK_CUSTOM_FIELD)
         total = 0
         for log in logs:
             log: ZendeskWorklog
+            if log.author_id != self.zen_assignee.user_id:
+                continue
+            if log.timestamp.strftime(r"%Y-%m-%d") < target_date_str:
+                continue
             total += log.duration
         return total

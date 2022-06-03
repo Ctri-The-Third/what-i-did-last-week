@@ -30,7 +30,13 @@ class JiraWorklogger(Jira):
             ):
                 continue
 
-            item = WorkItem("Jira", f"{ticket.key} {ticket.summary}")
+            item = WorkItem(
+                "Jira",
+                ticket.summary,
+                "",
+                ticket.key,
+                f"https://{self.host}/browse/{ticket.key}",
+            )
             all_logs = self.fetch_worklogs_for_jira_ticket(ticket.key)
             if ticket.status in ["Done", "Resolved", "Closed"]:
                 item.mark_complete()
@@ -38,7 +44,11 @@ class JiraWorklogger(Jira):
             seconds = 0
             for log in all_logs:
                 log: JiraWorklog
-                if self.jira_assignee in [log.author_email, log.author_key]:
+                # self.logger.debug(log.author_email, log.duration_seconds)
+                if (
+                    self.jira_assignee in [log.author_email, log.author_key]
+                    and log.created.strftime(r"%Y-%m-%d") >= target_date
+                ):
                     seconds += log.duration_seconds
             item.time_str = convert_min_to_time_str(int(seconds / 60))
 

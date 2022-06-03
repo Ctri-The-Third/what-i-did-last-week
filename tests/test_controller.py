@@ -29,3 +29,8 @@ def test_generate_output():
         week_log
         == "ITSM system 🟢          - I did one thing last week - but I finished it\nJira        🟡          - Did a little work on #a\nJira        🟡          - Task #123456 - thingy\n"
     )
+
+
+def test_files_present():
+    open("src/intro_page.md", "r+")
+    open("src/output_page.md", "r+")

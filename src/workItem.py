@@ -4,13 +4,15 @@ LARGEST_SOURCE = 0
 class WorkItem:
     "represents a single piece of work done, and includes time worked"
 
-    def __init__(self, source, summary, time_str: str = "") -> None:
+    def __init__(self, source, summary, time_str: str = "", id="", url="") -> None:
         global LARGEST_SOURCE
         self.source = source
         LARGEST_SOURCE = max(len(source), LARGEST_SOURCE)
         self.done = False
         self.summary = summary
         self.time_str = time_str
+        self.id = id
+        self.url = url
 
     def mark_complete(self):
         self.done = True

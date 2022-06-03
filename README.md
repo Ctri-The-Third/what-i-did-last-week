@@ -33,13 +33,40 @@ Additionally, [version 2.2+ of the HexHelpers](https://github.com/ctri-the-third
 # Deployment
 
 ```
-git clone git@github.com:Ctri-The-Third/what-i-did-last-week.git
+get source code from github
+```sh 
+git clone git@github.com:Ctri-The-Third/what-i-did-last-week.git```
 
-wget https://github.com/Ctri-The-Third/ServiceHelpers/releases/download/v2.2.0/hex_helpers-2.2.0-py3-none-any.whl -O hex_helpers-2.2.0-py3-none-any.whl
+get necessary install of the hex helpers library
+```sh wget https://github.com/Ctri-The-Third/ServiceHelpers/releases/download/v2.2.0/hex_helpers-2.2.0-py3-none-any.whl -O hex_helpers-2.2.0-py3-none-any.whl
+pip install ./hex_helpers-2.2.0-py3-none-any.whl ```
 
-pip install ./hex_helpers-2.2.0-py3-none-any.whl
+install remaining dependencies
+```sh 
+pip install -r requirements.txt```
 
-pip install -r requirements.txt
+install the nginx server
+```sh 
+apt install nginx```
+
+update the default site file, normally at `/etc/nginx/sites-enabled/default`
+
+```
+server {
+  listen 80 default_server; #listen on port 80
+  listen [::]:80 default_server ipv6only=on;
+
+  server_name yourdomain.com www.yourdomain.com; #edit 'yourdomain' with your domain name
+  root /var/www/html/; #edit to match wherever your bottle-py root folder is
+
+  location / {
+    proxy_pass http://127.0.0.1:8080/; 
+    #assuming configuration of bottle-py run() command is 127.0.0.1:8080
+  }
+}
+```
+
+
 ```
 
 # Execution

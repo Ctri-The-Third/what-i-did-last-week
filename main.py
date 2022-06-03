@@ -1,25 +1,50 @@
 import sys
 import logging
 
-from src.controller import Controller, load_config
+from bottle import route, run, request, response, post
 from src.workItem import WorkItem
+from src.main_page_functions import *
+
+
+PORT = 8080
+HOSTNAME = "127.0.0.1"
+
+
+@route("/")
+def index():
+    params = request.query
+    params: dict
+    if "code" in params:
+        try:
+            creds = get_credentials(params["code"])
+            if isinstance(creds, str):
+                return creds
+            user = get_user(creds)
+            name = user["given_name"]
+            email = user["email"]
+
+        except Exception as err:
+            return "something weird happened %s" % (err)
+
+        # user is logged in and there are no issues yet - deploy!
+        
+        return output_work_items(do_the_big_thing(creds, email))
+
+    else:
+
+        return run_auth_flow()
+
 
 if __name__ == "__main__":
     logging.basicConfig(
         handlers=[logging.StreamHandler(sys.stdout)], level=logging.INFO
     )
 
-    cfg = load_config()
-    target = cfg.get("DEFAULT", "user_email")
-
-    con = Controller(target)
-
-    con.fetch_tasks()
-
-    current_section = ""
-    for log in con.work_items:
-        log: WorkItem
-        if log.source != current_section:
-            print(f"--------------{log.source}-------------")
-            current_section = log.source
-        print(log)
+    print("Preparing to host")
+    run(
+        port=PORT,
+        host=HOSTNAME,
+        # server="gunicorn",
+        certfile="src/widlw.pem",
+        keyfile="src/widlw.key",
+    )
