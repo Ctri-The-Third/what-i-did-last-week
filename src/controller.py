@@ -41,10 +41,8 @@ class Controller:
         self.jira = JiraWorklogger(deets, assignee)
 
         self.cal = GCalendarWorklogger(google_creds, assignee)
-        lwd = datetime.now() - timedelta(how_many_days)
-        lwd = lwd.replace(hour=0, minute=0, second=0)
 
-        self.last_week_date = lwd.strftime(r"%Y-%m-%d")
+        self.last_week_date = _last_week_date(how_many_days=7)
         self.work_items = []
         self.logger = _LO
 
@@ -75,3 +73,10 @@ def load_config() -> dict:
     cfg = ConfigParser()
     cfg.read_file(open("last-week.cfg", "r", encoding="utf-8"))
     return cfg
+
+
+def _last_week_date(how_many_days=7) -> str:
+    lwd = datetime.now() - timedelta(days=how_many_days)
+    lwd = lwd.replace(hour=0, minute=0, second=0)
+
+    return lwd.strftime(r"%Y-%m-%d")

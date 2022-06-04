@@ -1,6 +1,6 @@
 import os, re
 from src.zendesk_weeklog import ZendeskWeekloger
-from src.controller import Controller
+from src.controller import Controller, _last_week_date
 
 ZENDESK_CUSTOM_FIELD = 360028226411
 
@@ -21,7 +21,7 @@ def test_bad_zd_assignee():
 def test_last_week_date():
     "check the returned string matches the right format"
 
-    date = Controller("test@test.com").last_week_date
+    date = _last_week_date(7)
     assert isinstance(date, str)
     match = re.match("[0-9]{4}-[0-2][0-9]-[0-3][0-9]", date)
 
