@@ -31,25 +31,25 @@ class FreshdeskWeekloger(FreshDesk):
             ticket: FreshdeskTicket = tickets[ticket_key]
             if ticket.responder_id == self.assignee_o.id:
 
+                item = WorkItem(
+                    "Freshdesk",
+                    f"{ticket.subject}",
+                    "",
+                    f"FD#{ticket.id}",
+                    f"https://{self.host}/a/tickets/{ticket.id}",
+                )
                 worklogs = self.get_worklogs(ticket_key)
+
                 time_minutes = 0
                 for log in worklogs:
                     if (
                         log.get("agent_id", 0) == self.assignee_o.id
                         and log.get("executed_at", "")[0:10] > last_week_date
                     ):
-                        time_minutes += convert_fd_time_str_to_min(
-                            log.get("time_spent", "00:00")
+                        item.increase_time(
+                            convert_fd_time_str_to_min(log.get("time_spent", "00:00"))
                         )
-                time_str = convert_min_to_time_str(time_minutes)
 
-                item = WorkItem(
-                    "Freshdesk",
-                    f"{ticket.subject}",
-                    time_str,
-                    f"FD#{ticket.id}",
-                    f"https://{self.host}/a/tickets/{ticket.id}",
-                )
                 if ticket.status in [4, 5]:
                     item.mark_complete()
                 self.work_items.append(item)

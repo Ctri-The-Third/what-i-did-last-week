@@ -3,7 +3,9 @@ import logging
 
 from bottle import route, run, request, response, post
 from src.workItem import WorkItem
+from src.controller import Controller
 from src.main_page_functions import *
+from src.gcalendar_weeklog import GCalendarWorklogger
 
 
 PORT = 8080
@@ -27,7 +29,7 @@ def index():
             return "something weird happened %s" % (err)
 
         # user is logged in and there are no issues yet - deploy!
-        
+
         return output_work_items(do_the_big_thing(creds, email))
 
     else:

@@ -65,18 +65,17 @@ class ZendeskWeekloger(zendesk):
                 )
 
                 continue
-            time = convert_min_to_time_str(
-                math.floor(
-                    self._get_time_total_for_task(ticket.id, self.target_date_str) / 60
-                )
+            time = math.floor(
+                self._get_time_total_for_task(ticket.id, self.target_date_str) / 60
             )
             item = WorkItem(
                 "zendesk",
                 ticket.summary,
-                time,
+                "",
                 f"ZD#{ticket.id}",
                 url=f"https://{self.host}/agent/tickets/{ticket.id}",
             )
+            item.increase_time(time)
             if ticket.status in ["solved", "closed"]:
                 item.mark_complete()
             return_obj.append(item)

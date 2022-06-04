@@ -1,6 +1,6 @@
 import logging
 from serviceHelpers.jira import Jira, JiraTicket, JiraDetails, JiraWorklog
-
+import math
 from src.workItem import WorkItem
 from src.common_methods import convert_min_to_time_str
 
@@ -50,7 +50,7 @@ class JiraWorklogger(Jira):
                     and log.created.strftime(r"%Y-%m-%d") >= target_date
                 ):
                     seconds += log.duration_seconds
-            item.time_str = convert_min_to_time_str(int(seconds / 60))
+            item.increase_time(math.floor(seconds / 60))
 
             workitems.append(item)
 
