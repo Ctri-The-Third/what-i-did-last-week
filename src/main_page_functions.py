@@ -12,7 +12,6 @@ ALL_SCOPES = [
     "https://www.googleapis.com/auth/userinfo.email",
     "openid",
     "https://www.googleapis.com/auth/calendar.events.readonly",
-    "https://www.googleapis.com/auth/calendar.readonly",
 ]
 
 
