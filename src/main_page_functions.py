@@ -2,7 +2,6 @@ import os
 from google_auth_oauthlib.flow import Flow
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-
 from src.controller import Controller, load_config
 from src.workItem import WorkItem
 from src.common_methods import convert_jira_time_str_to_min, convert_min_to_time_str
@@ -13,6 +12,7 @@ ALL_SCOPES = [
     "https://www.googleapis.com/auth/userinfo.email",
     "openid",
     "https://www.googleapis.com/auth/calendar.events.readonly",
+    "https://www.googleapis.com/auth/calendar.readonly",
 ]
 
 
@@ -62,17 +62,10 @@ def get_user(creds: Credentials) -> dict:
 
 def do_the_big_thing(creds: Credentials, target: str) -> list:
 
-    con = Controller(target)
+    con = Controller(target, creds)
 
     con.fetch_tasks()
 
-    current_section = ""
-    for log in con.work_items:
-        log: WorkItem
-        if log.source != current_section:
-            print(f"--------------{log.source}-------------")
-            current_section = log.source
-        print(log)
     return con
 
 
@@ -81,12 +74,14 @@ def output_work_items(cont: Controller) -> str:
     work_items = cont.work_items
     total_time = 0
     table_rows = ""
+    work_items.sort(reverse=True)
     for item in work_items:
         item: WorkItem
+
         total_time += convert_jira_time_str_to_min(item.time_str)
         status_emoji = "🟢" if item.done else "🟡"
 
-        table_rows += f"| {item.source} | [{item.id}]({item.url}) | {status_emoji} | {item.time_str} | {item.summary} | \n"
+        table_rows += f"| {item.source} | [{item.id[0:13]}]({item.url}) | {status_emoji} | {item.time_str} | {item.summary} | \n"
     total_time = convert_min_to_time_str(total_time)
     f = open(r"src/output_page.md", "r+")
     md_content = f.read().format(

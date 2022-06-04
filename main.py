@@ -3,7 +3,9 @@ import logging
 
 from bottle import route, run, request, response, post
 from src.workItem import WorkItem
+from src.controller import Controller
 from src.main_page_functions import *
+from src.gcalendar_weeklog import GCalendarWorklogger
 
 
 PORT = 8080
